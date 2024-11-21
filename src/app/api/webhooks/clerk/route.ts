@@ -86,7 +86,8 @@ export async function POST(req: Request) {
 
   // UPDATE
   if (eventType === "user.updated") {
-    const { id, image_url, first_name, last_name, username } = evt.data;
+    try {
+      const { id, image_url, first_name, last_name, username } = evt.data;
 
     const user = {
       firstName: first_name ?? '',
@@ -95,9 +96,14 @@ export async function POST(req: Request) {
       photo: image_url,
     };
 
-    const updatedUser = await updateUser(id, user);
+      const updatedUser = await updateUser(id, user);
+      console.log('Updated user:', updatedUser);
 
-    return NextResponse.json({ message: "OK", user: updatedUser });
+      return NextResponse.json({ message: "OK", user: updatedUser });
+    } catch (error) {
+      console.error('Error updating user:', error);
+      return new Response('Error updating user', { status: 500 });
+    }
   }
 
   // DELETE
